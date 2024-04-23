@@ -1,0 +1,10 @@
+ Volume in drive C is Local Disk
+ Volume Serial Number is 5EE7-284B
+
+ Directory of C:\Users\sgaandla\My Project
+
+04/22/2024  06:10 PM    <DIR>          .
+04/22/2024  06:07 PM    <DIR>          ..
+04/22/2024  06:10 PM                 0 test1.txt
+               1 File(s)              0 bytes
+               2 Dir(s)  126,431,064,064 bytes free
