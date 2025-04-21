@@ -1,0 +1,135 @@
+trigger:
+  - main
+
+pool:
+  name: SH-AgentPool-Build-APBT-EDW
+
+variables:
+  # Define project name and version as variables
+  projectName: 'playwright'
+  projectVersion: '1.0.0'
+
+stages:
+  # Stage 1: SonarQube analysis
+  - stage: SonarQubeAnalysis
+    displayName: SonarQube Analysis
+    jobs:
+      - job: SonarQube
+        displayName: Run SonarQube Analysis
+        steps:
+          #- checkout: self
+
+          - task: SonarQubePrepare@4
+            displayName: SonarQube Prepare
+            inputs:
+              SonarQube: 'SonarScan'
+              scannerMode: 'CLI'
+              configMode: 'manual'
+              cliProjectKey: 'playwright-nova'
+              cliProjectName: 'playwright-nova'
+              cliSources: '.'
+          - task: SonarQubeAnalyze@4
+            displayName: Sonar Analysis
+          - task: SonarQubePublish@4
+            displayName: Publish SonarQube Results
+            inputs:
+              pollingTimeoutSec: '300'
+
+  # Stage 2: Generate SBOM report And Upload
+  - stage: GenerateSBOM_and_UploadSBOM_Report
+    displayName: Generate SBOM Report
+    jobs:
+      - job: SBOM
+        displayName: SBOM Generation
+        steps:
+          - task: AzureCLI@2
+            displayName: SBOM install and generate report
+            inputs:
+              azureSubscription: 'AZR-BTE-ADS-PRD-AZSP-TUX'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az --version
+                echo "=================================="
+                echo "Executing az config set commands"
+                echo "=================================="
+                az config set extension.use_dynamic_install=yes_without_prompt
+
+                echo "======================================================================"
+                echo "Executing the sbom-tool generate commands and generating SBOM report"
+                echo "======================================================================"
+                $(Sbomdirectory) generate \
+                  -b '$(Build.ArtifactStagingDirectory)' \
+                  -bc '$(Build.SourcesDirectory)' \
+                  -pn $(projectName) -pv $(projectVersion) \
+                  -ps Risepoint -nsb https://sbom.academicpartnerships.com -V Verbose
+                # Verify the SBOM file has been generated
+                echo "=================================="
+                echo "Current directory directory"
+                echo "=================================="
+                pwd
+                echo "=================================="
+                echo "Listing contents of SBOM directory"
+                echo "=================================="
+                ls '$(Build.ArtifactStagingDirectory)/_manifest/spdx_2.2/'
+          - task: AzureCLI@2
+            displayName: Upload SBOM report to Azure storage
+            inputs:
+              azureSubscription: 'AZR-BTE-ADS-PRD-AZSP-TUX'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                echo "======== Curret work directory============="
+                pwd
+                echo "==================================================="
+                echo "Run the Build.ArtifactStagingDirectory commands"
+                echo "==================================================="
+                ls '$(Build.ArtifactStagingDirectory)/_manifest/spdx_2.2'
+                echo "========================================="
+                echo "Display Build.DefinitionName"
+                echo "========================================="
+                '$(Build.DefinitionName)'
+                '$(System.DefinitionId)'
+                '$(Build.BUILDID)'
+                echo "=================================="
+                echo "Rename SBOM file"
+                echo "=================================="
+                mv '$(Build.ArtifactStagingDirectory)/_manifest/spdx_2.2/manifest.spdx.json' '$(Build.ArtifactStagingDirectory)/_manifest/spdx_2.2/$(System.DefinitionId)-$(Build.BUILDID)-manifest.spdx.json'
+                
+                echo "=================================="
+                echo "Listing contents of SBOM directory after renaming"
+                echo "=================================="
+                ls '$(Build.ArtifactStagingDirectory)/_manifest/spdx_2.2'
+
+                echo "==================================="
+                echo "Executing Azure commands"
+                echo "==================================="
+                echo "======================================"
+                echo "Display Azure CLI current version"
+                echo "======================================"
+                az --version
+
+                echo "=================================="
+                echo "Setting Azure configuration"
+                echo "=================================="
+                az config set extension.use_dynamic_install=yes_without_prompt
+
+                echo "==============================================="
+                echo "Creating Azure Blob storage directory"
+                echo "==============================================="
+                az storage blob directory create -c sbomreports \
+                -d "$Env:BUILD_DEFINITIONNAME/$Env:BUILD_BuildID" \
+                --account-name azrbteadsprdstga
+
+                echo "==========================================="
+                echo "Copy contents to Azure blob storage"
+                echo "==========================================="
+                az storage azcopy blob upload -c sbomreports \
+                --account-name azrbteadsprdstga \
+                -s '$(Build.ArtifactStagingDirectory)/_manifest/spdx_2.2/$(System.DefinitionId)-$(Build.BUILDID)-manifest.spdx.json' \
+                -d "$(Build.DefinitionName)/$(System.DefinitionId)-$(Build.BUILDID)-manifest.spdx.json"
+
+                echo "===================================="
+                echo "End of Azure commands"
+                echo "===================================="
+

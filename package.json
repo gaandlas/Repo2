@@ -1,0 +1,44 @@
+{
+  "name": "playwright",
+  "version": "1.0.0",
+  "main": "index.js",
+"scripts": {
+    "test": "playwright test",
+    "test:Sitemap": "npx playwright test tests/web/health-check/sitemap.spec.ts",
+    "test:Tealium": "npx playwright test tests/web/health-check/tealium.spec.ts",
+    "test:SmartRFI": "npx playwright test tests/web/health-check/smartRFI.spec.ts",
+    "test:RFI": "npx playwright test tests/web/health-check/RFI.spec.ts",
+    "test:SEO": "npx playwright test tests/web/health-check/SEO.spec.ts",
+    "test: OsanoCookie.spec":"npx playwright test tests/web/health-check/OsanoCookie.spec.ts",
+    "test: ManageCookie.spec":"npx playwright test tests/web/health-check/ManageCookie.spec.ts",
+    "test:robots": "npx playwright test tests/web/Robots.spec.ts",
+    "test:TuitionCalculator": "npx playwright test tests/web/TuitionCal.spec.ts",
+    "test:HealthCheck": "npx playwright test tests/web/health-check",
+    "test:vrt": "npx playwright test tests/web/vrt.spec.ts --project=chrome"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@playwright/test": "^1.45.0",
+    "@types/aws-sdk": "^2.7.4",
+    "@types/dotenv": "^8.2.0",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^20.14.9",
+    "@types/nodemailer": "^6.4.16",
+    "@types/pixelmatch": "^5.2.6",
+    "@types/pngjs": "^6.0.5",
+    "fs-extra": "^11.2.0",
+    "pixelmatch": "^6.0.0",
+    "pngjs": "^7.0.0",
+    "sharp": "^0.33.5"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.663.0",
+    "@aws-sdk/credential-providers": "^3.662.0",
+    "aws-sdk": "^2.1692.0",
+    "dotenv": "^16.0.0",
+    "nodemailer": "^6.9.16"
+  }
+}

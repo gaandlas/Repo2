@@ -1,0 +1,41 @@
+{
+    "srp-valid-user":
+    {
+        "lssid": "lssid",
+        "DateOfLead": "05/23/2024 14:43",
+        "FirstName": "JerelCrespoTest",
+        "LastName": "14933-3",
+        "Email": "jerel03crespo240529@test.com",
+        "Phone": "3214201003",
+        "CountryCode": "US",
+        "ZipCode": "32822",
+        "AddressLine1": "123 Test Dr.",
+        "AddressState": "New Jersey",
+        "City": "Atlantic Highlands",
+        "ProgramCode": "UTAN-B-BSN",
+        "HasExpressedConsent": "true",
+        "Notes": "Test notes",
+        "HighestEducationLevel": "Bachelor's Degree",
+        "PartnerCode": "UTA",
+        "WebUrl": "https://www.dubdubdub.com/dotcom",
+        "WebClientID": "webclientid_test",
+        "UTMCampaign": "utmcampaign_test",
+        "UTMTerm": "utm_term",
+        "Gclid": "gclid_test",
+        "FbcId": "fbcid_test",
+        "ReferrerUrl": "https://www.referrer_url.com/direct-referral-organic",
+        "Source": "Referral",
+        "Externalld": "externalid_test",
+        "Campaign": "uta_all_all_x_sr_gen",
+        "Industry": "Nursing",
+        "SandboxOnly": "true"
+    },
+    "sparkroom-valid-user":
+    {
+        "lssid": "lssid",
+        "DateOfLead": "05/23/2024 14:43",
+        "FirstName": "JerelCrespoTest",
+        "LastName": "14933-3",
+        "Email": ""
+    }
+}
